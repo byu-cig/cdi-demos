@@ -32,3 +32,22 @@ def horse(resolution=256, frame_size=20.0*mm, horse_size=5.0*mm, wavelength=5*um
     d_fraun = 2 * horse_size**2 / wavelength
 
     return F, d_fraun
+
+
+def zone_plate(resolution=512, frame_size=20.0*cm, r_0=1.0*cm, N_rings=20, wavelength=5*um):
+    r_n = [np.sqrt(n+1)*r_0 for n in range(N_rings*2)]
+    focus = 2 * r_n[-1] * (r_n[-1] - r_n[-2]) / wavelength
+
+    F = lp.Begin(frame_size, wavelength, resolution)
+    F_out = lp.Begin(frame_size, wavelength, resolution)
+    F_out.field = F_out.field * 0
+    for n in range(N_rings):
+        F_out.field = F_out.field + lp.CircScreen(F, R=r_n[2*n]).field * lp.CircAperture(F, R=r_n[2*n+1]).field
+
+    return F_out, focus
+
+
+if __name__ == '__main__':
+    field, _ = zone_plate(resolution=512)
+    plt.imshow(lp.Intensity(field))
+    plt.show()

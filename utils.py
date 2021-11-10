@@ -43,8 +43,22 @@ def comp_to_rgb(comp_img):
     return colors.hsv_to_rgb(hsv)
 
 
+def add_phase_wheel(ax, corner, size):
+    # TODO
+    pass
+
+
+def get_save_dir():
+    root = tk.Tk()
+    root.withdraw()
+    return fd.askdirectory()
+
+
 def save_image(img, cmap='plasma'):
     root = tk.Tk()
     root.withdraw()
-    fname = fd.asksaveasfilename(defaultextension='png', filetypes=[('PNG', 'png')])
+    try:
+        fname = fd.asksaveasfilename(defaultextension='png', filetypes=[('PNG', 'png')])
+    except KeyError:
+        return
     plt.imsave(fname, img, cmap=cmap)
